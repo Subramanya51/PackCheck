@@ -99,7 +99,7 @@ public class SecurityConfig {
 
                         // Public authentication endpoints
                         .requestMatchers(
-                                "/admin/login",
+                                "/admin/login","/health",
                                 "/bellboy-head/register",
                                 "/bellboy-head/login",
                                 "/oauth2/**",
