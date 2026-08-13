@@ -50,7 +50,7 @@ public class HotelConfigurationService {
         hotel.setState(request.getState());
         hotel.setCity(request.getCity());
         hotel.setPostalCode(request.getPostalCode());
-
+        hotel.setNumberOfFloors(request.getNumberOfFloors());
         Hotel savedHotel =
                 hotelService.createHotel(hotel);
 
