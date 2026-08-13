@@ -120,4 +120,28 @@ public class BellboyHeadService {
 
         return result.toString();
     }
+    @Transactional
+    public void deleteBellboyHead(
+            String loginId,
+            Long hotelId) {
+
+        BellboyHead bellboyHead =
+                bellboyHeadRepository
+                        .findByLoginIdWithHotel(loginId)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Bellboy Head not found."
+                                ));
+
+        if (!bellboyHead.getHotel()
+                .getHotelId()
+                .equals(hotelId)) {
+
+            throw new IllegalArgumentException(
+                    "Bellboy Head does not belong to this hotel."
+            );
+        }
+
+        bellboyHeadRepository.delete(bellboyHead);
+    }
 }

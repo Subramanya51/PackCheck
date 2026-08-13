@@ -1,8 +1,10 @@
 package com.hotel.packcheck.service;
 
+import com.hotel.packcheck.dto.CartCountResponse;
 import com.hotel.packcheck.dto.CartResponse;
 import com.hotel.packcheck.entity.Cart;
 import com.hotel.packcheck.entity.Hotel;
+import com.hotel.packcheck.mqtt.MqttService;
 import com.hotel.packcheck.repository.CartRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,9 +15,10 @@ import com.hotel.packcheck.enums.CartMode;
 public class CartService {
 
     private final CartRepository cartRepository;
-
-    public CartService(CartRepository cartRepository) {
+    private final MqttService mqttService;
+    public CartService(CartRepository cartRepository,MqttService mqttService) {
         this.cartRepository = cartRepository;
+        this.mqttService = mqttService;
     }
 
     @Transactional
@@ -70,11 +73,45 @@ public class CartService {
         cartRepository.delete(cart);
     }
     @Transactional(readOnly = true)
-    public long getActiveCartCount(Long hotelId) {
+    public CartCountResponse getCartCounts(Long hotelId) {
 
-        return cartRepository.countByHotelHotelIdAndMode(
-                hotelId,
-                CartMode.ACTIVE
+        long activeCarts =
+                cartRepository.countByHotelHotelIdAndMode(
+                        hotelId,
+                        CartMode.ACTIVE
+                );
+
+        long maintenanceCarts =
+                cartRepository.countByHotelHotelIdAndMode(
+                        hotelId,
+                        CartMode.MAINTENANCE
+                );
+
+        return new CartCountResponse(
+                activeCarts,
+                maintenanceCarts
+        );
+    }
+    @Transactional
+    public void updateCartMode(
+            String cartId,
+            Long hotelId,
+            CartMode mode) {
+
+        Cart cart = cartRepository
+                .findByCartIdAndHotelHotelId(cartId, hotelId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Cart not found for this hotel."
+                        ));
+
+        cart.setMode(mode);
+
+        cartRepository.save(cart);
+
+        mqttService.publishModeUpdate(
+                cartId,
+                mode
         );
     }
 }

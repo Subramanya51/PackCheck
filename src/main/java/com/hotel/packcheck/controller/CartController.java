@@ -12,7 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
+import com.hotel.packcheck.dto.CartCountResponse;
+import com.hotel.packcheck.dto.CartModeRequest;
 @RestController
 @RequestMapping("/packcheck/carts")
 public class CartController {
@@ -45,8 +46,9 @@ public class CartController {
                 .body(response);
     }
 
+
     @GetMapping("/active/count")
-    public ResponseEntity<Long> getActiveCartCount(
+    public ResponseEntity<CartCountResponse> getCartCounts(
             Authentication authentication) {
 
         Long hotelId;
@@ -76,10 +78,10 @@ public class CartController {
                     .build();
         }
 
-        long count =
-                cartService.getActiveCartCount(hotelId);
+        CartCountResponse response =
+                cartService.getCartCounts(hotelId);
 
-        return ResponseEntity.ok(count);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping
@@ -103,5 +105,26 @@ public class CartController {
         return ResponseEntity
                 .noContent()
                 .build();
+    }
+    @PatchMapping("/mode")
+    public ResponseEntity<Void> updateCartMode(
+            Authentication authentication,
+            @RequestBody CartModeRequest request) {
+
+        AdminUserDetails adminUserDetails =
+                (AdminUserDetails) authentication.getPrincipal();
+
+        Admin admin = adminUserDetails.getAdmin();
+
+        Long hotelId =
+                admin.getHotel().getHotelId();
+
+        cartService.updateCartMode(
+                request.getCartId(),
+                hotelId,
+                request.getMode()
+        );
+
+        return ResponseEntity.noContent().build();
     }
 }

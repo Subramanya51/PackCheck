@@ -1,5 +1,6 @@
 package com.hotel.packcheck.mqtt;
 import com.hotel.packcheck.dto.CartWebSocketStatus;
+import com.hotel.packcheck.enums.CartMode;
 import tools.jackson.databind.ObjectMapper;
 import com.hotel.packcheck.dto.CartStatusMessage;
 import com.hotel.packcheck.service.FloorConfigurationService;
@@ -403,6 +404,61 @@ public class MqttService implements MqttCallback {
 
             throw new IllegalStateException(
                     "Unable to send floor update to cart",
+                    e
+            );
+        }
+    }
+    public void publishModeUpdate(
+            String cartId,
+            CartMode mode) {
+
+        String topic =
+                "packcheck/v1/cart/" + cartId + "/mode";
+
+        String payload =
+                """
+                {
+                    "mode": "%s"
+                }
+                """.formatted(mode.name());
+
+        try {
+
+            MqttMessage message =
+                    new MqttMessage(
+                            payload.getBytes(
+                                    StandardCharsets.UTF_8
+                            )
+                    );
+
+            message.setQos(1);
+
+            mqttClient.publish(
+                    topic,
+                    message
+            );
+
+            System.out.println(
+                    "MODE UPDATE PUBLISHED"
+            );
+
+            System.out.println(
+                    "Topic: " + topic
+            );
+
+            System.out.println(
+                    "Payload: " + payload
+            );
+
+        } catch (MqttException e) {
+
+            System.err.println(
+                    "Failed to publish mode update: "
+                            + e.getMessage()
+            );
+
+            throw new IllegalStateException(
+                    "Unable to send mode update to cart",
                     e
             );
         }

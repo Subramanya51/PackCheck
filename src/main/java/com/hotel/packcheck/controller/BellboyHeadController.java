@@ -8,7 +8,10 @@ import com.hotel.packcheck.service.BellboyHeadAuthenticationService;
 import com.hotel.packcheck.service.BellboyHeadService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.hotel.packcheck.dto.BellboyHeadDeleteRequest;
+import com.hotel.packcheck.entity.Admin;
+import com.hotel.packcheck.security.AdminUserDetails;
+import org.springframework.security.core.Authentication;
 @RestController
 @RequestMapping("/bellboy-head")
 public class BellboyHeadController {
@@ -47,5 +50,26 @@ public class BellboyHeadController {
                 bellboyHeadAuthenticationService.login(request);
 
         return ResponseEntity.ok(response);
+    }
+    @DeleteMapping
+    public ResponseEntity<Void> delete(
+            Authentication authentication,
+            @RequestBody BellboyHeadDeleteRequest request) {
+
+        AdminUserDetails adminUserDetails =
+                (AdminUserDetails) authentication.getPrincipal();
+
+        Admin admin =
+                adminUserDetails.getAdmin();
+
+        Long hotelId =
+                admin.getHotel().getHotelId();
+
+        bellboyHeadService.deleteBellboyHead(
+                request.getLoginId(),
+                hotelId
+        );
+
+        return ResponseEntity.noContent().build();
     }
 }

@@ -99,7 +99,7 @@ public class SecurityConfig {
 
                         // Public authentication endpoints
                         .requestMatchers(
-                                "/admin/login","/health",
+                                "/admin/login","/health","/packcheck/configuration",
                                 "/bellboy-head/register",
                                 "/bellboy-head/login",
                                 "/oauth2/**",
@@ -110,6 +110,14 @@ public class SecurityConfig {
                         .requestMatchers(
                                 org.springframework.http.HttpMethod.POST,
                                 "/packcheck/carts"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(
+                                HttpMethod.PATCH,
+                                "/packcheck/carts/mode"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/bellboy-head"
                         ).hasRole("ADMIN")
 
                         .requestMatchers(
