@@ -26,5 +26,6 @@ public interface CartRepository
             Long hotelId,
             CartMode mode
     );
+    List<Cart> findAllByHotelHotelId(Long hotelId);
 
 }

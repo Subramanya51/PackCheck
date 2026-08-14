@@ -14,6 +14,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import com.hotel.packcheck.dto.CartCountResponse;
 import com.hotel.packcheck.dto.CartModeRequest;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/packcheck/carts")
 public class CartController {
@@ -46,7 +49,42 @@ public class CartController {
                 .body(response);
     }
 
+    @GetMapping
+    public ResponseEntity<List<CartResponse>> getCarts(
+            Authentication authentication) {
 
+        Long hotelId;
+
+        if (authentication.getPrincipal()
+                instanceof AdminUserDetails adminUserDetails) {
+
+            hotelId =
+                    adminUserDetails
+                            .getAdmin()
+                            .getHotel()
+                            .getHotelId();
+
+        } else if (authentication.getPrincipal()
+                instanceof BellboyHeadUserDetails bellboyHeadUserDetails) {
+
+            hotelId =
+                    bellboyHeadUserDetails
+                            .getBellboyHead()
+                            .getHotel()
+                            .getHotelId();
+
+        } else {
+
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .build();
+        }
+
+        List<CartResponse> carts =
+                cartService.getCartsByHotel(hotelId);
+
+        return ResponseEntity.ok(carts);
+    }
     @GetMapping("/active/count")
     public ResponseEntity<CartCountResponse> getCartCounts(
             Authentication authentication) {
