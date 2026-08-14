@@ -52,6 +52,9 @@ jwt:
 app:
   frontend:
     url: http://localhost:3000
+firebase:
+  database-url: https://packcheck-3268f-default-rtdb.asia-southeast1.firebasedatabase.app
+  credentials: ${FIREBASE_CREDENTIALS}
 logging:
   level:
     org.springframework.security: INFO
