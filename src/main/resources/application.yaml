@@ -49,7 +49,9 @@ mqtt:
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION:86400000}
-
+app:
+  frontend:
+    url: http://localhost:3000
 logging:
   level:
     org.springframework.security: INFO
