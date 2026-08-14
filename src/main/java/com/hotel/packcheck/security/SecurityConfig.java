@@ -236,7 +236,7 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 "/admin/login",
-                                "/health",
+                                "/health","/ws/**",
                                 "/packcheck/configuration",
                                 "/bellboy-head/register",
                                 "/bellboy-head/login",
