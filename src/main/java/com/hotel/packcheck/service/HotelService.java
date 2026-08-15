@@ -19,4 +19,15 @@ public class HotelService {
 
         return hotelRepository.save(hotel);
     }
+    @Transactional
+    public Hotel updateHotel(Hotel hotel) {
+
+        return hotelRepository.save(hotel);
+    }
+    public Hotel getHotelById(Long hotelId) {
+        return hotelRepository.findById(hotelId)
+                .orElseThrow(() ->
+                        new RuntimeException("Hotel not found.")
+                );
+    }
 }

@@ -1,6 +1,7 @@
 package com.hotel.packcheck.service;
 
 import com.hotel.packcheck.dto.HotelConfigurationRequest;
+import com.hotel.packcheck.dto.HotelDetailsUpdateRequest;
 import com.hotel.packcheck.entity.Admin;
 import com.hotel.packcheck.entity.Floor;
 import com.hotel.packcheck.entity.Hotel;
@@ -82,6 +83,30 @@ public class HotelConfigurationService {
                 savedHotel.getState(),
                 savedHotel.getCity(),
                 savedHotel.getPostalCode()
+        );
+    }
+    @Transactional
+    public HotelConfigurationResponse updateHotelDetails(
+            Long hotelId,
+            HotelDetailsUpdateRequest request) {
+
+        Hotel hotel = hotelService.getHotelById(hotelId);
+
+        hotel.setHotelName(request.getHotelName());
+        hotel.setCity(request.getCity());
+        hotel.setState(request.getState());
+        hotel.setCountry(request.getCountry());
+        hotel.setPostalCode(request.getPostalCode());
+
+        Hotel updatedHotel = hotelService.updateHotel(hotel);
+
+        return new HotelConfigurationResponse(
+                updatedHotel.getHotelId(),
+                updatedHotel.getHotelName(),
+                updatedHotel.getCountry(),
+                updatedHotel.getState(),
+                updatedHotel.getCity(),
+                updatedHotel.getPostalCode()
         );
     }
 }
